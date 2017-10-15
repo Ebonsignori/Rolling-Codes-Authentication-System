@@ -1,11 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package rollingcodeauthentication;
-
-import java.util.BitSet;
 
 /**
  *
@@ -13,7 +6,7 @@ import java.util.BitSet;
  */
 public class XTEA {
     
-    public static BitSet encrypt(BitSet set, BitSet key) {
+    public static Bits encrypt(Bits set, Bits key) {
 //        // Split Bits into two 32 bit halves
 //        BitSet LHS = block.get(0, 31);
 //        BitSet RHS = block.get(31, 62);
@@ -32,7 +25,7 @@ public class XTEA {
           return set;
     }
     
-    public static BitSet decrypt(BitSet set, BitSet key) {
+    public static Bits decrypt(Bits set, Bits key) {
 //        // Split Bits into two 32 bit halves
 //        BitSet LHS = block.get(0, 31);
 //        BitSet RHS = block.get(31, 62);

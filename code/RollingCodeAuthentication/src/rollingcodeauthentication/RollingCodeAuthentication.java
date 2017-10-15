@@ -3,7 +3,6 @@ package rollingcodeauthentication;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.BitSet;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -51,8 +50,8 @@ public class RollingCodeAuthentication extends Application {
                 if (selected > 0 && selected < numOfTx) {
                     try {
                     Transmitter tx = TXs[selected];
-                    BitSet[] requestPacket = tx.getRequestPacket(true);
-                    BitSet[] responsePacket = reader.getResponsePacket(requestPacket);
+                    Bits[] requestPacket = tx.getRequestPacket(true);
+                    Bits[] responsePacket = reader.getResponsePacket(requestPacket);
                     tx.updateRecord(responsePacket);
                     System.out.println("Authentication Completed Sucessfully.");
                     } catch (Exception e) {

@@ -4,47 +4,47 @@ import java.util.BitSet;
 
 /* TX (Transmitter) has its ID, IV and the ID of the reader it is linked to */
 public class Transmitter extends Reader {
-    private BitSet linkedReaderID = null;
-    private BitSet sharedXTEAKey = null;
-    private BitSet txID = null;
-    private BitSet txIV = null;
+    private Bits linkedReaderID = null;
+    private Bits sharedXTEAKey = null;
+    private Bits txID = null;
+    private Bits txIV = null;
                 
     /* Initialize TX with random ID and IV, unlinked to reader */
     public Transmitter() {
-        this.txID = MyBitSet.randomBits(62);
-        this.txIV = MyBitSet.randomBits(62);
+        this.txID = new Bits(62, true); // 62 random Bits
+        this.txIV = new Bits(62, true);
     }
     
     /* Initialize TX with random ID and IV, linked the Reader in argument */
     public Transmitter(Reader reader) {
-        this.txID = MyBitSet.randomBits(62);
-        this.txIV = MyBitSet.randomBits(62);
+        this.txID = new Bits(62, true);
+        this.txIV = new Bits(62, true);
         this.linkedReaderID = reader.linkTransmitter(this.txID, this.txIV);
         this.sharedXTEAKey = reader.getXTEAKey();     
     }
     
     /* Get this TX's ID */
-    public BitSet getID() {
+    public Bits getID() {
        return this.txID;
     }
     
     /* Get the reader ID that this TX is linked to */
-    public BitSet getReaderID() {
+    public Bits getReaderID() {
        return this.linkedReaderID;
     }
     
-    public void setReaderID(BitSet readerID) {
+    public void setReaderID(Bits readerID) {
        this.linkedReaderID = readerID;
     }
     
     /* Generate request packet with messages if arg is true, without if false*/
-    public BitSet[] getRequestPacket(boolean sendMessages) {
+    public Bits[] getRequestPacket(boolean sendMessages) {
        if (sendMessages) {
             System.out.println("Fetching Request Packet from Transmitter");
             System.out.println("Encrypting Transmitter IV");
        }
        /* Request Packet contains: TX ID, Reader ID, and encrypted TX IV */
-       BitSet[] packet = {this.txID,
+       Bits[] packet = {this.txID,
                           this.linkedReaderID,
                           XTEA.encrypt(this.txIV, this.sharedXTEAKey)};
        System.out.println("Packet sent with Trasmitter ID, Reader ID, and encrypted IV");
@@ -52,7 +52,7 @@ public class Transmitter extends Reader {
     }
     
     /* Update TX's IV if linked Reader sends verified response packet  */
-    public void updateRecord(BitSet[] responsePacket) {
+    public void updateRecord(Bits[] responsePacket) {
        System.out.println("Response Packet recieved. \n"
                + "Updating Transmitter Record with next IV");
        if (responsePacket != this.getRequestPacket(false)) {
