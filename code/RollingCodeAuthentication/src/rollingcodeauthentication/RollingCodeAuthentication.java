@@ -62,6 +62,18 @@ public class RollingCodeAuthentication extends Application {
             }
         });
         
+        Button testBtn = new Button();
+        testBtn.setText("TEST");
+        testBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Bits bits = new Bits(64, true);
+                Bits key = new Bits(128, true);
+                Bits encrypted = XTEA.encrypt(bits, key);
+                Bits decrypted = XTEA.decrypt(encrypted, key);
+            }
+        });
+                
         // Create console to output status of the authentication        
         TextArea authLogConsole = new TextArea();
         Console console = new Console(authLogConsole);
@@ -76,7 +88,7 @@ public class RollingCodeAuthentication extends Application {
         
         // Populate left VBox with list of transmitters, a button, and a console
         VBox leftVBox = new VBox();
-        leftVBox.getChildren().addAll(txList, btnSendTX);
+        leftVBox.getChildren().addAll(txList, btnSendTX, testBtn);
         VBox.setVgrow(txList, Priority.ALWAYS);
         
         // Create List to view Reader(s)
@@ -102,11 +114,9 @@ public class RollingCodeAuthentication extends Application {
         primaryStage.show();
     }
     
-    /**
-     * @param args the command line arguments
-     */
+    /* Main method for starting GUI loop */
     public static void main(String[] args) {
-        launch(args);
+        launch(args);    
     }
     
     public static class Console extends OutputStream {

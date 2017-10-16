@@ -1,7 +1,5 @@
 package rollingcodeauthentication;
 
-import java.util.BitSet;
-
 /* TX (Transmitter) has its ID, IV and the ID of the reader it is linked to */
 public class Transmitter extends Reader {
     private Bits linkedReaderID = null;
