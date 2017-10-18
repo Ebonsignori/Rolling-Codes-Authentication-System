@@ -36,8 +36,10 @@ public class XTEA {
             bitsRH.add(((bitsLH.shiftedLeft(4)).xored(bitsLH.shiftedRight(5))).added(bitsLH).xored(sum.added(keys[rKey]))); 
         }
         
-        // Add left and right sides together
-        Bits encrypted = bitsLH.added(bitsRH).padded(64);
+        // Trim left and right halves and comine them into ciphertext block 
+        bitsLH.trim(32);
+        bitsRH.trim(32);
+        Bits encrypted = new Bits(bitsLH.toString() + bitsRH.toString());
         
         System.out.println("LeftHalf: ");
         System.out.println(bitsLH);

@@ -194,8 +194,44 @@ public class Bits {
             System.arraycopy(this.bits, 0, result, n-this.length, this.length);
             return new Bits(result);
         } else {
-            System.out.println("Bits don't need padding");
+            System.out.println("Padding length smaller than bit length");
             return new Bits(this.bits);
+        }
+    }
+    
+    /* Pad's these bits (add 0 to leftmost) so that they are length 'n' */
+    public void pad(int n) {
+        if (this.length < n) {
+            int[] result = new int[n];
+            System.arraycopy(this.bits, 0, result, n-this.length, this.length);
+            this.bits = result;
+            this.length = n;
+        } else {
+            System.out.println("Padding length smaller than bit length");
+        }
+    }
+    
+    /* Returns left-most trimmed bits so that they are length 'n' */
+    public Bits trimmed(int n) {
+        if (this.length > n) {
+            int[] result = new int[n];
+            System.arraycopy(this.bits, n-this.length, result, 0, this.length - n);
+            return new Bits(result);
+        } else {
+            System.out.println("Trimmed length bigger than bit length");
+            return new Bits(this.bits);
+        }
+    }
+    
+    /* Trims this left-most bits to length 'n' */
+    public void trim(int n) {
+        if (this.length > n) {
+            int[] result = new int[n];
+            System.arraycopy(this.bits, this.length - n, result, 0, n);
+            this.bits = result;
+            this.length = n;
+        } else {
+            System.out.println("Trimmed length bigger than bit length");
         }
     }
     
