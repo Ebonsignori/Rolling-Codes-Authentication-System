@@ -65,6 +65,8 @@ public class Bits {
         if (n < 0) {
             System.out.print("Can't shift by negatives.");
             return null;
+        } else if (n >= this.length - 1) {
+            n -= this.length;
         }
         
         int[] result = new int[this.length];
@@ -79,13 +81,20 @@ public class Bits {
         if (n < 0) {
             System.out.print("Can't shift by negatives.");
             return null;
+        } else if (n > this.length ) {
+            n %= this.length;
+            int[] result = new int[this.length];
+            System.arraycopy(this.bits, 0, result, n, this.length-n);
+            System.arraycopy(this.bits, this.length-n, result, 0, n);
+
+            return new Bits(result);
+        } else {
+            int[] result = new int[this.length];
+            System.arraycopy(this.bits, 0, result, n, this.length-n);
+            System.arraycopy(this.bits, this.length-n, result, 0, n);
+
+            return new Bits(result);
         }
-        
-        int[] result = new int[this.length];
-        System.arraycopy(this.bits, 0, result, n, this.length-n);
-        System.arraycopy(this.bits, this.length-n, result, 0, n);
-        
-        return new Bits(result);
     }
     
     /* Adds this Bits object with passed Bits object */
@@ -100,6 +109,17 @@ public class Bits {
         String strResult = intResult.toString(2);
         this.stringToBits(strResult);
     } 
+    
+    public int[] addBin(Bits bitsIn) {
+        int[] bits2 = bitsIn.getBits();
+        int bits2Len = bits2.length;
+        int [] sum = new int [Math.min(this.length, bits2Len)+1];
+        
+        for(int i =0; i < sum.length; i++) {
+            sum[i]= this.bits[i] + bits2[i];
+        }
+        return sum;
+    }
     
     /* Adds this Bits object with passed Bits object. Return new Bits Object*/
     public Bits added(Bits bits2) {
@@ -118,9 +138,8 @@ public class Bits {
         // Convert Bits objects to their string representations
         String bitStr1 = this.toString();
         String bitStr2 = bits2.toString();
-        // Parse representations into integers and sum them
-       // Parse representations into bigInts and sum them
-        BigInteger intResult = new BigInteger(bitStr1, 2).subtract(new BigInteger(bitStr2, 2));
+        // Parse representations into bigInts and sum them
+        BigInteger intResult = new BigInteger(bitStr1, 2).subtract(new BigInteger(bitStr2, 2)).abs();
         // Parse result back into string and convert string into Bits
         String strResult = intResult.toString(2);
         this.stringToBits(strResult);
@@ -194,7 +213,7 @@ public class Bits {
             System.arraycopy(this.bits, 0, result, n-this.length, this.length);
             return new Bits(result);
         } else {
-            System.out.println("Padding length smaller than bit length");
+            System.out.println("Padding length less than bit length");
             return new Bits(this.bits);
         }
     }
@@ -207,7 +226,7 @@ public class Bits {
             this.bits = result;
             this.length = n;
         } else {
-            System.out.println("Padding length smaller than bit length");
+            System.out.println("Padding length less than bit length");
         }
     }
     
@@ -223,11 +242,23 @@ public class Bits {
         }
     }
     
-    /* Trims this left-most bits to length 'n' */
+//    /* Trims these left-most bits to length 'n' */
+//    public void trim(int n) {
+//        if (this.length > n) {
+//            int[] result = new int[n];
+//            System.arraycopy(this.bits, this.length - n, result, 0, n);
+//            this.bits = result;
+//            this.length = n;
+//        } else {
+//            System.out.println("Trimmed length bigger than bit length");
+//        }
+//    }
+    
+    /* Trims these right-most bits to length 'n' */
     public void trim(int n) {
         if (this.length > n) {
             int[] result = new int[n];
-            System.arraycopy(this.bits, this.length - n, result, 0, n);
+            System.arraycopy(this.bits, 0, result, 0, n);
             this.bits = result;
             this.length = n;
         } else {
@@ -268,7 +299,7 @@ public class Bits {
     
     /* Returns integer of bits */
     public int toInteger() {
-        return Integer.parseInt(this.toString());
+        return Integer.parseInt(this.toString(), 2);
     }
     
     /* Returns string in array form of bits */
@@ -286,10 +317,10 @@ public class Bits {
         return binString.toString();
     }
     
-    public static void main(String[] args) {
-        Bits b1 = new Bits(25);
-        System.out.println(b1.toArrString());
-        System.out.println(b1.subset(0, 5).toArrString());
-    }
+//    public static void main(String[] args) {
+//        Bits b1 = new Bits(25);
+//        System.out.println(b1.toArrString());
+//        System.out.println(b1.subset(0, 5).toArrString());
+//    }
     
 }

@@ -68,6 +68,8 @@ public class RollingCodeAuthentication extends Application {
             @Override
             public void handle(ActionEvent event) {
                 Bits bits = new Bits(64, true);
+                System.out.println("IV: ");
+                System.out.println(bits);
                 Bits key = new Bits(128, true);
                 Bits encrypted = XTEA.encrypt(bits, key);
                 Bits decrypted = XTEA.decrypt(encrypted, key);
@@ -83,7 +85,7 @@ public class RollingCodeAuthentication extends Application {
         authLogConsole.setEditable(false);
         authLogConsole.setText("Send Request Pakcet to Begin Authentication \n");   
         authLogConsole.setStyle("-fx-highlight-fill: lightgray; -fx-highlight-text-fill: firebrick; -fx-font-size: 12px;");
-        authLogConsole.setPrefHeight(115);
+        authLogConsole.setPrefHeight(200);
         authLogConsole.setPrefWidth(40);
         
         // Populate left VBox with list of transmitters, a button, and a console
