@@ -50,10 +50,17 @@ public class RollingCodeAuthentication extends Application {
                 if (selected > 0 && selected < numOfTx) {
                     try {
                     Transmitter tx = TXs[selected];
-                    Bits[] requestPacket = tx.getRequestPacket(true);
-                    Bits[] responsePacket = reader.getResponsePacket(requestPacket);
-                    tx.updateRecord(responsePacket);
-                    System.out.println("Authentication Completed Sucessfully.");
+                    Packet requestPacket = tx.getRequestPacket(true);
+                    System.out.println("Request Packet: ");
+                    System.out.println(requestPacket.toString());
+                    Packet responsePacket = reader.getResponsePacket(requestPacket);
+                    boolean isSuccessful = tx.updateRecord(responsePacket);
+                    System.out.println("Response Packet: ");
+                    System.out.println(requestPacket.toString());
+                    if (isSuccessful)
+                        System.out.println("Authentication Completed Sucessfully");
+                    else 
+                        System.out.println("Authentication Failed");
                     } catch (Exception e) {
                         e.printStackTrace();
                         System.out.println("Authentication Ended With Error.");
@@ -62,19 +69,23 @@ public class RollingCodeAuthentication extends Application {
             }
         });
         
+        // Create a packet request button to initiate authentication process
         Button testBtn = new Button();
-        testBtn.setText("TEST");
+        testBtn.setText("Test.");
         testBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Bits bits = new Bits(64, true);
-                System.out.println("IV: ");
-                System.out.println(bits);
-                Bits key = new Bits(128, true);
-                Bits encrypted = XTEA.encrypt(bits, key);
-                Bits decrypted = XTEA.decrypt(encrypted, key);
+                int[] key = new int[]{5, 6, 7, 8};
+                XTEA xtea = new XTEA(key);
+                long block = 5;
+                System.out.println(block);
+                long encrypted = xtea.encrypt(block);
+                System.out.println(encrypted);
+                long decrytped = xtea.decrypt(encrypted);
+                System.out.println(decrytped);
             }
         });
+        
                 
         // Create console to output status of the authentication        
         TextArea authLogConsole = new TextArea();
