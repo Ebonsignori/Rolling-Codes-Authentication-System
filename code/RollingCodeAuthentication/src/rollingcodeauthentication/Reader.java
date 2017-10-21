@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /* Reader holds the shared ID and IVs of n linked TXs (Transmitters) */
-class Reader {
+public class Reader {
     private int[] key = RandomBits.random32s(4);
     private short readerID;
     private int numOfLinkedTxs = 0;
@@ -65,9 +65,8 @@ class Reader {
                 if (isValidIV) {
                     System.out.println("Authentication Verified: "
                                    + "decrypted IV matches IV on Reader record!");
-                    long updatedIV = actualTxIv;
+                    long updatedIV = actualTxIv + 256;
                     this.updateRecord(requestPacket.getTxId(), updatedIV);
-                    
                     System.out.println("Sending Response Packet to Transmitter");
                     return new Packet(requestPacket.getTxId(), 
                                       requestPacket.getReaderId(), 
@@ -103,14 +102,28 @@ class Reader {
     public void updateRecord(long txID, long updatedIV) {
        // Replace old IV with new IV
        System.out.println("Updating Reader's IV record with next IV");
+       System.out.println("Next IV = IV + 256 = " + Long.toString(updatedIV));
        this.txIdsAndIvs.set(this.indexPairOf(txID)[0], new long[]{txID, updatedIV}); 
     }
     
-   
-        
+    /* Update IV corresponding to txID */
+    public void updateIV(long ID, long IV) {
+        this.txIdsAndIvs.set(this.indexPairOf(ID)[0], new long[]{ID, IV});
+    }
+    
+    /* Update IV corresponding to txID */
+    public void updateID(long oldID, long newID, long IV) {
+        this.txIdsAndIvs.set(this.indexPairOf(oldID)[0], new long[]{newID, IV});
+    }
+     
     /* Get this Reader's ID */
-    public long getReaderID() {
+    public short getReaderID() {
         return this.readerID;
+    }
+    
+    /* Set this Reader's ID */
+    public void setReaderID(short newID) {
+        this.readerID = newID;
     }
     
     /* Get number of TX's linked to this Reader */
@@ -121,6 +134,14 @@ class Reader {
     /* Get this Reader's ID */
     public int[] getXTEAKey() {
         return this.key;
-    }    
+    }
+    
+    public String getSharedKeyString() {
+        StringBuilder keyString = new StringBuilder(this.key.length);
+        for (int i = 0; i < this.key.length; i++) {
+            keyString.append(Integer.toString(this.key[i]));
+        }
+        return keyString.toString();
+    }
     
 }

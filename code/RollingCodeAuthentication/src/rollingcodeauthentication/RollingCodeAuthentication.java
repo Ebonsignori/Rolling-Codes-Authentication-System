@@ -2,17 +2,18 @@ package rollingcodeauthentication;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -20,8 +21,8 @@ import javafx.stage.Stage;
 /* GUI for Rolling Code Authentication */
 public class RollingCodeAuthentication extends Application {
     
-    @Override
-    public void start(Stage primaryStage) {
+    
+    public void starts(Stage primaryStage) {
         // Create a reader and populate it with hard coded number of TXs
         int numOfTx = 10;
         Reader reader = new Reader(numOfTx);
@@ -68,40 +69,11 @@ public class RollingCodeAuthentication extends Application {
                 }
             }
         });
-        
-        // Create a packet request button to initiate authentication process
-        Button testBtn = new Button();
-        testBtn.setText("Test.");
-        testBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                int[] key = new int[]{5, 6, 7, 8};
-                XTEA xtea = new XTEA(key);
-                long block = 5;
-                System.out.println(block);
-                long encrypted = xtea.encrypt(block);
-                System.out.println(encrypted);
-                long decrytped = xtea.decrypt(encrypted);
-                System.out.println(decrytped);
-            }
-        });
-        
-                
-        // Create console to output status of the authentication        
-        TextArea authLogConsole = new TextArea();
-        Console console = new Console(authLogConsole);
-        PrintStream ps = new PrintStream(console, true);
-        System.setOut(ps);
-        System.setErr(ps);
-        authLogConsole.setEditable(false);
-        authLogConsole.setText("Send Request Pakcet to Begin Authentication \n");   
-        authLogConsole.setStyle("-fx-highlight-fill: lightgray; -fx-highlight-text-fill: firebrick; -fx-font-size: 12px;");
-        authLogConsole.setPrefHeight(200);
-        authLogConsole.setPrefWidth(40);
-        
+                     
+                       
         // Populate left VBox with list of transmitters, a button, and a console
         VBox leftVBox = new VBox();
-        leftVBox.getChildren().addAll(txList, btnSendTX, testBtn);
+        leftVBox.getChildren().addAll(txList, btnSendTX);
         VBox.setVgrow(txList, Priority.ALWAYS);
         
         // Create List to view Reader(s)
@@ -118,7 +90,6 @@ public class RollingCodeAuthentication extends Application {
         BorderPane root = new BorderPane();
         root.setLeft(leftVBox);
         root.setRight(rightVBox);
-        root.setBottom(authLogConsole);
         
         Scene scene = new Scene(root, 600, 400);
         
@@ -127,12 +98,25 @@ public class RollingCodeAuthentication extends Application {
         primaryStage.show();
     }
     
+    @Override
+    public void start(Stage primaryStage)  {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            Pane root = fxmlLoader.load(getClass().getResource("/GUI/FXMLDocument.fxml"));
+            primaryStage.setTitle("Rolling Code Authentication");
+            primaryStage.setScene(new Scene(root));
+            primaryStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }   
+    }
+    
     /* Main method for starting GUI loop */
     public static void main(String[] args) {
         launch(args);    
     }
     
-    public static class Console extends OutputStream {
+     public static class Console extends OutputStream {
 
         private TextArea output;
 
@@ -146,4 +130,5 @@ public class RollingCodeAuthentication extends Application {
         }
     }
     
+
 }

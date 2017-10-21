@@ -33,6 +33,47 @@ public class XTEA {
         
         return encrypted;
     }
+    
+//    /* Takes 64-bit block and returns the TEA encrypted bits */
+//    public long TEAEncrypt(long block) { 
+//        // Split 64 bits into right and left halves and convert to integers
+//        int L = (int)(block >> 32);
+//        int R = (int)block;     
+//        
+//        // Initialize sum and encrypt using TEA algorithm
+//        long sum = 0;
+//        long delta = Long.parseLong("2654435769");
+//        for (int i = 0; i < 32; i++) { 
+//            sum += delta; 
+//            L += (((R << 4) + keys[0]) ^ (R + sum) ^ (R >> 5) + keys[1]);
+//            R += (((L << 4) + keys[2]) ^ (L + sum) ^ (L >> 5) + keys[3]);
+//        }
+//        
+//        long encrypted = (long)L << 32 | R & 0xFFFFFFFFL;
+//               
+//        return encrypted;
+//    }
+//    
+//    /* Takes 64-bit block and returns the XTEA encrypted bits */
+//    public long TEADecrypt(long block) { 
+//        // Split 64 bits into right and left halves and convert to integers
+//        int L = (int)(block >> 32);
+//        int R = (int)block;     
+//        
+//        // Initialize sum and encrypt using TEA algorithm
+//        long delta = Long.parseLong("2654435769");
+//        long sum = delta << 5;
+//        
+//        for (int i = 0; i < 32; i++) { 
+//            R -= (((L << 4) + keys[2]) ^ (L + sum) ^ (L >> 5) + keys[3]);
+//            L -= (((R << 4) + keys[0]) ^ (R + sum) ^ (R >> 5) + keys[1]);
+//            sum -= delta; 
+//        }
+//        
+//        long decrypted = (long)L << 32 | R & 0xFFFFFFFFL;
+//               
+//        return decrypted;
+//    }
         
     /* Takes 64-bit block and returns the XTEA decrypted bits */
     public long decrypt(long block) {

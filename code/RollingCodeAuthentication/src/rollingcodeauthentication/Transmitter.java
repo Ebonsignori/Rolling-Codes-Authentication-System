@@ -8,6 +8,7 @@ public class Transmitter  {
     private long txIV;
     private XTEA xtea;
     private Packet sentRequestPacket;
+    private Reader linkedReader;
                 
     /* Initialize TX with random ID and IV, unlinked to reader */
     public Transmitter() {
@@ -17,18 +18,22 @@ public class Transmitter  {
     
     /* Initialize TX with random ID and IV, linked the Reader in argument */
     public Transmitter(Reader reader) {
+        linkedReader = reader;
         this.txID = RandomBits.random64();
         this.txIV = RandomBits.random64();
         this.linkedReaderID = reader.linkTransmitter(this.txID, this.txIV);
         this.sharedKey = reader.getXTEAKey();   
-        System.out.print("Initalizaed with: ");
-        System.out.print(this.sharedKey[0]);
         this.xtea = new XTEA(this.sharedKey);
     }
     
     /* Get this TX's ID */
     public long getID() {
        return this.txID;
+    }
+    
+    public void setCurrentID(long newID) {
+       this.txID = newID;
+       linkedReader.updateID(this.txID, newID, this.txIV);
     }
     
     /* Get the reader ID that this TX is linked to */
@@ -39,6 +44,31 @@ public class Transmitter  {
     public void setReaderID(short readerID) {
        this.linkedReaderID = readerID;
     }
+    
+    public long getCurrentIV() {
+       return this.txIV;
+    }
+    
+    public void setCurrentIV(long newIV) {
+       this.txIV = newIV;
+       linkedReader.updateIV(this.txID, this.txIV);
+    }
+    
+    public String getSharedKeyString() {
+        StringBuilder keyString = new StringBuilder(this.sharedKey.length);
+        for (int i = 0; i < this.sharedKey.length; i++) {
+            keyString.append(Integer.toString(this.sharedKey[i]));
+        }
+        return keyString.toString();
+    }
+    
+    /* Sets an int to all four keys */
+    public void setSharedKey(int key) {
+        for (int i = 0; i < 4; i++) {
+            this.sharedKey[i] = key;
+        }
+    }
+    
     
     /* Generate request packet with messages if arg is true, without if false*/
     public Packet getRequestPacket(boolean sendMessages) {
@@ -70,9 +100,10 @@ public class Transmitter  {
     public boolean updateRecord(Packet responsePacket) {
        System.out.println("Response Packet recieved from reader");
        if (responsePacket.getBlock() != this.sentRequestPacket.getBlock()) {
-               System.out.println("Updating Transmitter Record with next IV");
+           System.out.print("Updating Transmitter Record with next IV = "  );
            // Update IV to the old IV + 256, as stored in response packet
            this.txIV = xtea.decrypt(responsePacket.getBlock());
+           System.out.println(this.txIV);
            return true;
        } 
        
