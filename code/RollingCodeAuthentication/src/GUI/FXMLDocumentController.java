@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -34,12 +35,16 @@ public class FXMLDocumentController implements Initializable {
     private boolean rdIsSelected = false;
     
     @FXML
-    public TextArea logConsole;
     public ListView<String> txList;
     public ListView<String> rdList;
     public NumberOfTXTextField numOfTXText;
     public Button addReaderBtn;
+    
+    @FXML
+    public TextArea logConsole;
     public Button authenticateBtn;
+    public CheckBox printProgress;
+    public CheckBox printValues;
     
     @FXML
     public Label txIDLabel;
@@ -138,53 +143,57 @@ public class FXMLDocumentController implements Initializable {
     
     @FXML
     public void selectTX() {
-        int index = txList.getFocusModel().getFocusedIndex();
-        Transmitter tx = TXs.get(index);
-        txIsSelected = true;
-        
-        // Display current tx values
-        currentRdID.setText(Short.toString(tx.getReaderID()));
-        txIDLabel.setText("Transmitter ID:");
-        currentTxID.setText(Long.toString(tx.getID()));
-        currentKey.setText(tx.getSharedKeyString()); 
-        currentIVLabel.setText("Current IV:");
-        currentIV.setText(Long.toString(tx.getCurrentIV()));
-        
-        // Allow for tx update fields to be accessed 
-        readerIDField.setDisable(false);
-        transmitterIDField.setDisable(false);
-        keyField.setDisable(false);
-        ivField.setDisable(false);         
-        
-        // If both RD and TX have been selected, enable authentication button
-        if (txIsSelected && rdIsSelected) {
-            authenticateBtn.setDisable(false);  
+        if (!txList.getItems().isEmpty()) {
+            int index = txList.getFocusModel().getFocusedIndex();
+            Transmitter tx = TXs.get(index);
+            txIsSelected = true;
+
+            // Display current tx values
+            currentRdID.setText(Short.toString(tx.getReaderID()));
+            txIDLabel.setText("Transmitter ID:");
+            currentTxID.setText(Long.toString(tx.getID()));
+            currentKey.setText(tx.getSharedKeyString()); 
+            currentIVLabel.setText("Current IV:");
+            currentIV.setText(Long.toString(tx.getCurrentIV()));
+
+            // Allow for tx update fields to be accessed 
+            readerIDField.setDisable(false);
+            transmitterIDField.setDisable(false);
+            keyField.setDisable(false);
+            ivField.setDisable(false);         
+
+            // If both RD and TX have been selected, enable authentication button
+            if (txIsSelected && rdIsSelected) {
+                authenticateBtn.setDisable(false);  
+            }
         }
     }
     
     @FXML
     public void selectRD() {
-        int index = rdList.getFocusModel().getFocusedIndex();
-        Reader rd = RDs.get(index);
-        rdIsSelected = true;
-        
-        // Display current rd values
-        currentRdID.setText(Short.toString(rd.getReaderID()));
-        txIDLabel.setText("Linked Transmitters:");
-        currentTxID.setText(Integer.toString(rd.getNumOfTx()));
-        currentKey.setText(rd.getSharedKeyString()); 
-        currentIVLabel.setText(" ");
-        currentIV.setText(" ");  
-        
-        // Disable tx update fields to be accessed
-        readerIDField.setDisable(true);
-        transmitterIDField.setDisable(true);
-        keyField.setDisable(true);
-        ivField.setDisable(true);
-        
-        // If both RD and TX have been selected, enable authentication button
-        if (txIsSelected && rdIsSelected) {
-            authenticateBtn.setDisable(false);  
+        if (!rdList.getItems().isEmpty()) {
+            int index = rdList.getFocusModel().getFocusedIndex();
+            Reader rd = RDs.get(index);
+            rdIsSelected = true;
+
+            // Display current rd values
+            currentRdID.setText(Short.toString(rd.getReaderID()));
+            txIDLabel.setText("Linked Transmitters:");
+            currentTxID.setText(Integer.toString(rd.getNumOfTx()));
+            currentKey.setText(rd.getSharedKeyString()); 
+            currentIVLabel.setText(" ");
+            currentIV.setText(" ");  
+
+            // Disable tx update fields to be accessed
+            readerIDField.setDisable(true);
+            transmitterIDField.setDisable(true);
+            keyField.setDisable(true);
+            ivField.setDisable(true);
+
+            // If both RD and TX have been selected, enable authentication button
+            if (txIsSelected && rdIsSelected) {
+                authenticateBtn.setDisable(false);  
+            }
         }
     }
     
@@ -213,22 +222,23 @@ public class FXMLDocumentController implements Initializable {
         if (txList.getFocusModel().getFocusedIndex() > -1) {
             int index = txList.getFocusModel().getFocusedIndex();
             Transmitter tx = TXs.get(index);
+            System.out.println();
 
-            if (readerIDField.getText() != "" || !readerIDField.getText().equals("")) {
+            if (!readerIDField.getText().isEmpty()) {
                 System.out.println("Updating reader ID");
                 updateReaderID(tx);
             } 
-            if (transmitterIDField.getText() != "") {
+            if (!transmitterIDField.getText().isEmpty()) {
                 System.out.println("Updating transmitter ID");
                 updateTransmitterID(tx);
             }
             
-            if (keyField.getText() != "") {
+            if (!keyField.getText().isEmpty()) {
                 System.out.println("Updating key ID");
                 updateKey(tx);
             } 
             
-            if (ivField.getText() != "") {
+            if (!ivField.getText().isEmpty()) {
                 System.out.println("Updating IV");
                 updateIV(tx);
             }    
@@ -260,15 +270,23 @@ public class FXMLDocumentController implements Initializable {
                         colorRightArrow("fail");
                         colorLeftArrow("fail");
                 } else {
-                    logConsole.setText("Authentication Start /n");
-                    Packet requestPacket = tx.getRequestPacket(true);
+                    boolean printingValues = printValues.isSelected();
+                    boolean printingProgress = printProgress.isSelected();
+                    logConsole.setText("Authentication Begin \n");
+                    Packet requestPacket = tx.getRequestPacket(printingProgress, printingValues);
                     colorLeftArrow("success");
-                    System.out.println("Request Packet: ");
-                    System.out.println(requestPacket.toString());
-                    Packet responsePacket = reader.getResponsePacket(requestPacket);
-                    boolean isSuccessful = tx.updateRecord(responsePacket);
-                    System.out.println("Response Packet: ");
-                    System.out.println(requestPacket.toString());
+                    if (printingValues) {
+                        System.out.println("Request Packet: ");
+                        System.out.println(requestPacket.toString());
+                    }
+                    Packet responsePacket = reader.getResponsePacket(requestPacket, printingProgress, printingValues);
+                    boolean isSuccessful = tx.updateRecord(responsePacket, printingProgress, printingValues);
+                    
+                    if (printingValues) {
+                        System.out.println("Response Packet: ");
+                        System.out.println(responsePacket.toString());
+                    }
+
                     if (isSuccessful) {
                         System.out.println("Authentication Completed Sucessfully");
                         colorRightArrow("success");

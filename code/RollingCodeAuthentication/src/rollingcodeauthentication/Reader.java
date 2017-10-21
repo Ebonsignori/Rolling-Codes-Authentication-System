@@ -35,12 +35,12 @@ public class Reader {
     }
     
     /* Takes in request packet and returns response packet if verified */
-    public Packet getResponsePacket(Packet requestPacket) {
-        System.out.println("Request Packet Recieved by Reader");
+    public Packet getResponsePacket(Packet requestPacket, boolean printingProgress, boolean printingValues) {
+        if (printingProgress) System.out.println("Request Packet Recieved by Reader");
         // Verify TX sent request to this reader
         if (requestPacket.getReaderId() == this.readerID) {
              // Verify TX's ID is linked to this reader (in the TX ID list)
-             System.out.println("Trasmitter ID is in Reader's System");
+             if (printingProgress) System.out.println("Trasmitter ID is in Reader's System");
              long txId = requestPacket.getTxId();
              int[] txIdIvIndexes = this.indexPairOf(txId);
              
@@ -52,7 +52,7 @@ public class Reader {
                 boolean isValidIV = false;
                 
                 // Run through 256 possibilites and find match by XOR with known IV and possible IV's
-                System.out.println("Pattern matching unpredictable sequence with txIV on record");
+                if (printingProgress) System.out.println("Pattern matching unpredictable sequence with txIV on record");
                 for (int i = 1; i < 256; i++) {
                     apparentTxIv = xtea.encrypt((long) actualTxIv + i);
                     isValidIV = (apparentTxIv ^ txId) == unpredictableSequence;
@@ -63,11 +63,11 @@ public class Reader {
 
                 // Return Response Packet with TX's IV + 256
                 if (isValidIV) {
-                    System.out.println("Authentication Verified: "
+                    if (printingProgress) System.out.println("Authentication Verified: "
                                    + "decrypted IV matches IV on Reader record!");
                     long updatedIV = actualTxIv + 256;
-                    this.updateRecord(requestPacket.getTxId(), updatedIV);
-                    System.out.println("Sending Response Packet to Transmitter");
+                    this.updateRecord(requestPacket.getTxId(), updatedIV, printingProgress, printingValues);
+                    if (printingProgress) System.out.println("Sending Response Packet to Transmitter");
                     return new Packet(requestPacket.getTxId(), 
                                       requestPacket.getReaderId(), 
                                       xtea.encrypt(updatedIV));
@@ -99,10 +99,10 @@ public class Reader {
     }
     
     /* Update TX in record identified by argument 1's ID with argument 2's IV */
-    public void updateRecord(long txID, long updatedIV) {
+    public void updateRecord(long txID, long updatedIV, boolean printingProgress, boolean PrintingValues) {
        // Replace old IV with new IV
-       System.out.println("Updating Reader's IV record with next IV");
-       System.out.println("Next IV = IV + 256 = " + Long.toString(updatedIV));
+       if (printingProgress) System.out.println("Updating Reader's IV record with next IV");
+       if (PrintingValues) System.out.println("Next IV = IV + 256 = " + Long.toBinaryString(updatedIV));
        this.txIdsAndIvs.set(this.indexPairOf(txID)[0], new long[]{txID, updatedIV}); 
     }
     

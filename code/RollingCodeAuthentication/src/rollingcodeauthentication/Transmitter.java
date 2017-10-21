@@ -71,39 +71,40 @@ public class Transmitter  {
     
     
     /* Generate request packet with messages if arg is true, without if false*/
-    public Packet getRequestPacket(boolean sendMessages) {
-       if (sendMessages) System.out.println("Fetching Request Packet from Transmitter");
-       int ctr = 15;
+    public Packet getRequestPacket(boolean printingProgress, boolean printingValues) {
+       if (printingProgress) System.out.println("Fetching Request Packet from Transmitter");
+       int ctr = 256;
        long[] Ivs = new long[ctr];
        // Encrypt IV+i for i=0-256 and psuedo-randomly select one
-       if (sendMessages) System.out.println("Encrypting IVs+i for i = 0, 1, 2, .. 256 and selecting one to include in response packet");
+       if (printingProgress) System.out.println("Encrypting IVs+i for i = 0, 1, 2, .. 256 and selecting one to include in response packet");
        for (int i = 1; i < ctr; i++) {
            Ivs[i] = xtea.encrypt((long) this.txIV + i);
        }
-       
        // Psuedo-randomly select an encrypted IV and XOR it with TX ID
        int randomIndex = 0 + (int)(Math.random() * ((ctr - 0) + 1));
-       if (sendMessages)
+       if (printingProgress)
             System.out.println("Selecting psuedo-random IV+i and XOR it with transmitter ID");
+       if (printingValues)
+           System.out.println("Selected IV+i = " + Long.toBinaryString(Ivs[randomIndex]));
        long unpredictableSequence = Ivs[randomIndex] ^ this.txID;
-       System.out.println(unpredictableSequence);
-       if (sendMessages) System.out.println("Creating packet with unpredictable sequence");
+       if (printingProgress) System.out.println("Creating packet with unpredictable sequence");
        /* Request Packet contains: TX ID, Reader ID, and IV+i encrypted IV */
        this.sentRequestPacket = new Packet(this.txID,
                           this.linkedReaderID,
                           unpredictableSequence);
-       if (sendMessages) System.out.println("Packet sent with Trasmitter ID, Reader ID, and Encrypted IV+i");
+       if (printingProgress) System.out.println("Packet sent with Trasmitter ID, Reader ID, and Encrypted IV+i");
        return sentRequestPacket;
     }
     
     /* Update TX's IV if linked Reader sends verified response packet  */
-    public boolean updateRecord(Packet responsePacket) {
-       System.out.println("Response Packet recieved from reader");
+    public boolean updateRecord(Packet responsePacket, boolean printingProgress, boolean printingValues) {
+       if (printingProgress) System.out.println("Response Packet recieved from reader");
        if (responsePacket.getBlock() != this.sentRequestPacket.getBlock()) {
-           System.out.print("Updating Transmitter Record with next IV = "  );
+           if (printingProgress) System.out.print("Updating Transmitter Record with next IV"  );
            // Update IV to the old IV + 256, as stored in response packet
            this.txIV = xtea.decrypt(responsePacket.getBlock());
-           System.out.println(this.txIV);
+           if (printingValues) 
+               System.out.println("Decrypted IV to update records = " + Long.toBinaryString(this.txIV));
            return true;
        } 
        

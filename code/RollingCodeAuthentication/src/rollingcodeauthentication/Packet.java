@@ -30,9 +30,9 @@ public class Packet {
     public String toString() {
         StringBuilder str = new StringBuilder(3);
         
-        str.append("Tx ID: " + Long.toBinaryString(this.txID) + "\n");
-        str.append("Reader ID: " + Integer.toBinaryString((int)this.readerID) + "\n");
-        str.append("64-bit Block: " + Long.toBinaryString(this.block));
+        str.append("Tx ID = " + Long.toBinaryString(this.txID) + "\n");
+        str.append("Reader ID = " + Integer.toBinaryString((int)this.readerID) + "\n");
+        str.append("64-bit Block = " + Long.toBinaryString(this.block));
         
         return str.toString();
     }

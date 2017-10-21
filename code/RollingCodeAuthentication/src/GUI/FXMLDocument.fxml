@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.*?>
 <?import GUI.validatetextfields.*?>
 
-
 <Pane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.FXMLDocumentController">
    <children>
       <Label alignment="TOP_CENTER" layoutX="15.0" layoutY="325.0" text="Current Values of Selected TX" textAlignment="CENTER">
@@ -81,8 +80,8 @@
                </children>
             </Group>
             <Separator layoutX="-300.0" layoutY="317.0" prefHeight="17.0" prefWidth="800.0" />
-            <CheckBox layoutX="45.0" layoutY="257.0" mnemonicParsing="false" text="Print Values To Console" />
-            <CheckBox layoutX="38.0" layoutY="228.0" mnemonicParsing="false" text="Print Progress To Console" />
+            <CheckBox fx:id="printValues" layoutX="45.0" layoutY="257.0" mnemonicParsing="false" text="Print Values To Console" />
+            <CheckBox fx:id="printProgress" layoutX="38.0" layoutY="228.0" mnemonicParsing="false" text="Print Progress To Console" />
             <HBox alignment="TOP_CENTER" layoutX="-9.0" layoutY="14.0" prefHeight="31.0" prefWidth="254.0" spacing="10.0">
                <children>
                   <Button fx:id="addReaderBtn" mnemonicParsing="false" onAction="#addReader" text="Add Reader With" />
