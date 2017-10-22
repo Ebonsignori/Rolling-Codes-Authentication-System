@@ -1,7 +1,7 @@
-package rollingcodeauthentication;
+package rollingcodeauthentication; // Package for main application logic 
 
-/**
- Packet holds a 64-bit transmitter ID, 16-bit reader ID, and a 64-bit block
+/*
+ * Packet holds a 64-bit transmitter ID, 16-bit reader ID, and a 64-bit block
  */
 public class Packet {
     private long txID;

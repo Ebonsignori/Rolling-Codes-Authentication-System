@@ -1,4 +1,4 @@
-package rollingcodeauthentication;
+package rollingcodeauthentication; // Package for main application logic 
 
 /* TX (Transmitter) has its ID, IV and the ID of the reader it is linked to */
 public class Transmitter  {
@@ -31,9 +31,10 @@ public class Transmitter  {
        return this.txID;
     }
     
+    /* Sets this reader's ID and updates corresponding ID in reader's record */
     public void setCurrentID(long newID) {
-       this.txID = newID;
        linkedReader.updateID(this.txID, newID, this.txIV);
+       this.txID = newID;
     }
     
     /* Get the reader ID that this TX is linked to */
@@ -41,19 +42,23 @@ public class Transmitter  {
        return this.linkedReaderID;
     }
     
+    /* Sets linked reader ID. Reader not guarenteed to have TX ID in its record */
     public void setReaderID(short readerID) {
        this.linkedReaderID = readerID;
     }
     
+    /* Returns this TX's current IV */
     public long getCurrentIV() {
        return this.txIV;
     }
     
+    /* Sets this reader's IV and updates corresponding IV in reader's record */
     public void setCurrentIV(long newIV) {
        this.txIV = newIV;
        linkedReader.updateIV(this.txID, this.txIV);
     }
     
+    /* Returns shared key as concatenated string */
     public String getSharedKeyString() {
         StringBuilder keyString = new StringBuilder(this.sharedKey.length);
         for (int i = 0; i < this.sharedKey.length; i++) {

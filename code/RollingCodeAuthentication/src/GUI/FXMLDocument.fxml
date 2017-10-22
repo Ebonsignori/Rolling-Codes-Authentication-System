@@ -28,30 +28,30 @@
             <Label fx:id="txIDLabel" alignment="BOTTOM_CENTER" text="Transmitter ID: " />
          </graphic>
       </Label>
-      <TextField fx:id="readerIDField" layoutX="641.0" layoutY="365.0">
+      <ShortNumberField fx:id="readerIDField" layoutX="641.0" layoutY="365.0">
          <tooltip>
             <Tooltip text="Changing the linked reader ID will unlink this transmitter from this reader. If you try to link this transmitter to another reader, you will not be able to authenticate because you do not share a key nor does the reader have the corresponding tx IV's in its records." />
          </tooltip>
-      </TextField>
+      </ShortNumberField>
       <Button layoutX="660.0" layoutY="530.0" mnemonicParsing="false" onAction="#updateValues" text="Update Values" />
       <Label alignment="BOTTOM_CENTER" layoutX="552.0" layoutY="494.0" text="Current IV" />
-      <TextField fx:id="transmitterIDField" layoutX="641.0" layoutY="408.0" prefHeight="25.0" prefWidth="149.0">
+      <LongNumberField fx:id="transmitterIDField" layoutX="641.0" layoutY="408.0" prefHeight="25.0" prefWidth="149.0">
          <tooltip>
             <Tooltip text="Changes to the transmitter's ID will be reflected in the linked reader's records." />
          </tooltip>
-      </TextField>
-      <TextField fx:id="ivField" layoutX="641.0" layoutY="490.0">
+      </LongNumberField>
+      <LongNumberField fx:id="ivField" layoutX="641.0" layoutY="490.0">
          <tooltip>
             <Tooltip text="Changes to the selected transmitter's IV will be reflected in the reader's record." />
          </tooltip>
-      </TextField>
+      </LongNumberField>
       <Label alignment="BOTTOM_CENTER" layoutX="553.0" layoutY="455.0" text="Shared Key" />
       <Label alignment="BOTTOM_CENTER" layoutX="553.0" layoutY="369.0" text="Reader ID" />
-      <TextField fx:id="keyField" layoutX="641.0" layoutY="451.0" prefHeight="25.0" prefWidth="149.0">
+      <IntNumberField fx:id="keyField" layoutX="641.0" layoutY="451.0" prefHeight="25.0" prefWidth="149.0">
          <tooltip>
             <Tooltip text="Changing the transmitter's key will not change the linked reader's key." />
          </tooltip>
-      </TextField>
+      </IntNumberField>
       <Label alignment="BOTTOM_CENTER" layoutX="552.0" layoutY="412.0" text="Transmitter ID " />
       <Label alignment="TOP_CENTER" layoutX="510.0" layoutY="325.0" text="Change Values of Selected TX " textAlignment="CENTER">
          <font>

@@ -2,12 +2,14 @@ package GUI.validatetextfields; // Package for custom TextField validations
 
 import javafx.scene.control.TextField;
 
-/* Validator class for Number of TX option textfield */
-public class NumberOfTXTextField extends TextField {
+/*
+ * Validator class for Number Field in range of Java Int primitives 
+ */
+public class IntNumberField extends TextField {
     
-    // Default Text is 5
-    public NumberOfTXTextField() {
-        this.setText("5");
+    // Prompt text to show max input value
+    public IntNumberField() {
+        this.setPromptText("+" + Integer.toString(Integer.MAX_VALUE));
     }
     
     /* replaceText and replaceSelection are necessary for functionality */
@@ -24,18 +26,18 @@ public class NumberOfTXTextField extends TextField {
         super.replaceSelection(string);
     }
     
-    /* Checks that value is an integer between 1 and 10 */
+    /* Checks that input is within range of int values */
     public void validate() {
         String newValue = this.getText();
         
         if (newValue.matches("[0-9]+")) {
-            int value = Integer.parseInt(newValue);
+            long value = Long.parseLong(newValue);
 
             /* If exceeds or goes under range, appropriately set to min or max*/
-            if (value < 1) {
-                super.setText("1");
-            } else if (value > 10) {
-                super.setText("10");
+            if (value < Integer.MIN_VALUE) {
+                super.setText(Integer.toString(Integer.MIN_VALUE));
+            } else if (value > Integer.MAX_VALUE) {
+                super.setText(Integer.toString(Integer.MAX_VALUE));
             }
         }
     }

@@ -1,7 +1,6 @@
-package rollingcodeauthentication;
+package rollingcodeauthentication; // Package for main application logic 
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /* Reader holds the shared ID and IVs of n linked TXs (Transmitters) */
 public class Reader {
@@ -136,6 +135,7 @@ public class Reader {
         return this.key;
     }
     
+    /* This key concatenated into a string */
     public String getSharedKeyString() {
         StringBuilder keyString = new StringBuilder(this.key.length);
         for (int i = 0; i < this.key.length; i++) {
