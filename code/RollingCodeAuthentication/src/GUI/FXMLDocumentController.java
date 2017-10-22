@@ -53,6 +53,7 @@ public class FXMLDocumentController implements Initializable {
     
     // Labels for displaying current TX and RD values
     @FXML
+    public Label currentValuesHeader;
     public Label currentTxID;
     public Label currentRdID;
     public Label currentKey;
@@ -164,6 +165,7 @@ public class FXMLDocumentController implements Initializable {
             txIsSelected = true;
 
             // Display current tx values
+            currentValuesHeader.setText("Current Values of Selected TX");
             currentRdID.setText(Short.toString(tx.getReaderID()));
             txIDLabel.setText("Transmitter ID:");
             currentTxID.setText(Long.toString(tx.getID()));
@@ -193,6 +195,7 @@ public class FXMLDocumentController implements Initializable {
             rdIsSelected = true;
 
             // Display current rd values
+            currentValuesHeader.setText("Current Values of Selected RD");
             currentRdID.setText(Short.toString(rd.getReaderID()));
             txIDLabel.setText("Linked Transmitters:");
             currentTxID.setText(Integer.toString(rd.getNumOfTx()));
@@ -299,7 +302,8 @@ public class FXMLDocumentController implements Initializable {
                     boolean printingValues = printValues.isSelected();
                     boolean printingProgress = printProgress.isSelected();
                     logConsole.setText("Authentication Begin \n");
-                    
+                    System.out.print("Between RD #" + Integer.toString(rdIndex+1));
+                    System.out.println(" and TX #" + Integer.toString(txIndex+1));
                     /* In software we fetch the request packet from TX though the
                      * TX is the one that initalizes the authentication process */
                     Packet requestPacket = tx.getRequestPacket(printingProgress, printingValues);
