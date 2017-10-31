@@ -304,9 +304,11 @@ public class FXMLDocumentController implements Initializable {
                     logConsole.setText("Authentication Begin \n");
                     System.out.print("Between RD #" + Integer.toString(rdIndex+1));
                     System.out.println(" and TX #" + Integer.toString(txIndex+1));
+
                     /* In software we fetch the request packet from TX though the
                      * TX is the one that initalizes the authentication process */
                     Packet requestPacket = tx.getRequestPacket(printingProgress, printingValues);
+  
                     colorLeftArrow("success"); // Color arrow green
                     if (printingValues) {
                         System.out.println("Request Packet: ");

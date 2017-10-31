@@ -33,7 +33,7 @@ public class Transmitter  {
     
     /* Sets this reader's ID and updates corresponding ID in reader's record */
     public void setCurrentID(long newID) {
-       linkedReader.updateID(this.txID, newID, this.txIV);
+//       linkedReader.updateID(this.txID, newID, this.txIV);
        this.txID = newID;
     }
     
@@ -55,7 +55,7 @@ public class Transmitter  {
     /* Sets this reader's IV and updates corresponding IV in reader's record */
     public void setCurrentIV(long newIV) {
        this.txIV = newIV;
-       linkedReader.updateIV(this.txID, this.txIV);
+//       linkedReader.updateIV(this.txID, this.txIV);
     }
     
     /* Returns shared key as concatenated string */
@@ -72,6 +72,7 @@ public class Transmitter  {
         for (int i = 0; i < 4; i++) {
             this.sharedKey[i] = key;
         }
+        this.xtea = new XTEA(this.sharedKey);
     }
     
     
@@ -82,7 +83,7 @@ public class Transmitter  {
        long[] Ivs = new long[ctr];
        // Encrypt IV+i for i=0-256 and psuedo-randomly select one
        if (printingProgress) System.out.println("Encrypting IVs+i for i = 0, 1, 2, .. 256 and selecting one to include in response packet");
-       for (int i = 1; i < ctr; i++) {
+       for (int i =  0; i < ctr; i++) {
            Ivs[i] = xtea.encrypt((long) this.txIV + i);
        }
        // Psuedo-randomly select an encrypted IV and XOR it with TX ID

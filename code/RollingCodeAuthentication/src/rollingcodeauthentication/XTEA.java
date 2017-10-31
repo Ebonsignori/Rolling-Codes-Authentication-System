@@ -6,50 +6,68 @@ package rollingcodeauthentication; // Package for main application logic
  */
 public class XTEA {
     private int rounds = 64;
-    private long delta = Long.parseLong("2654435769"); 
+    private long[] delta = new long[rounds];
     private int[] keys;
     
-    /* Initalize XTEA Object with key */
+    /* Initalize XTEA Object with key and set initial value of delta */
     public XTEA(int[] key) {
         this.keys = key;
+        delta[0] = Long.parseLong("2654435769");
     }
     
     /* Takes 64-bit block and returns the XTEA encrypted bits */
     public long encrypt(long block) { 
-        // Split 64 bits into right and left halves and convert to integers
-        int leftHalf = (int)(block >> 32);
-        int rightHalf = (int)block;     
+        int[] leftHalf = new int[64];
+        int[] rightHalf = new int[64];
         
-        // Initialize sum and encrypt using XTEA algorithm
-        long sum = 0;
-        for (int i = 0; i < rounds; i++) { 
-            leftHalf += (rightHalf << 4 ^ rightHalf >>> 5) + rightHalf ^ keys[(int) (sum & 0x3)] + sum; 
-            sum += delta; 
-            rightHalf += keys[(int) ((sum >>> 11) & 3)] + sum ^ leftHalf + (leftHalf << 4 ^ leftHalf >>> 5); 
+        // Split 64 bits into right and left halves and convert to integers
+        leftHalf[0] = (int)(block >> 32);
+        rightHalf[0] = (int)block; 
+        
+        // Encrypt using XTEA algorithm
+        int r = 0;
+        for (int i = 0; i < rounds - 1; i++) { 
+            r = i + 1;
+            delta[i] = ((i+1) / 2 ) * delta[0];
+            // Left half[i] + round_function(right[i], Key[2i-1
+            leftHalf[i+1] = leftHalf[i] + ((rightHalf[i] << 4 ^ rightHalf[i] >>> 5) + rightHalf[i] ^ (int) delta[i] + keys[keyIndex(r)]); 
+            rightHalf[i+1] = rightHalf[i] + ((leftHalf[i+1] << 4 ^ leftHalf[i+1] >>> 5) + leftHalf[i+1] ^ (int) delta[i+1] + keys[keyIndex(r)]); 
         }
         
-        long encrypted = (long)leftHalf << 32 | rightHalf & 0xFFFFFFFFL;
+        long encrypted = (long)leftHalf[rounds-1] << 32 | rightHalf[rounds-1] & 0xFFFFFFFFL;
                 
         return encrypted;
     }
             
     /* Takes 64-bit block and returns the XTEA decrypted bits */
     public long decrypt(long block) {
-        // Split 64 bits into right and left halves and convert to integers
-        int leftHalf = (int)(block >> 32);
-        int rightHalf = (int)block;
+        int[] leftHalf = new int[64];
+        int[] rightHalf = new int[64];
         
-        // Initialize sum and decrypt using XTEA algorithm
-        long sum = rounds * delta; // Different for decryption
-        for (int i = 0; i < rounds; i++) { 
-            rightHalf -= keys[(int) ((sum >>> 11) & 3)] + sum ^ leftHalf + (leftHalf << 4 ^ leftHalf >>> 5); 
-            sum -= delta; 
-            leftHalf -= (rightHalf << 4 ^ rightHalf >>> 5) + rightHalf ^ keys[(int) (sum & 0x3)] + sum; 
+        // Split 64 bits into right and left halves and convert to integers
+        leftHalf[0] = (int)(block >> 32);
+        rightHalf[0] = (int)block;  
+ 
+        // Decrypt using XTEA algorithm
+        int r = 0;
+        for (int i = 0; i < rounds - 1; i++) { 
+            r = i + 1;
+            delta[i] = ((i+1) / 2) * delta[0];
+            rightHalf[i+1] = rightHalf[i] - ((leftHalf[i] << 4 ^ leftHalf[i] >>> 5) + leftHalf[i] ^ (int) delta[i] + keys[keyIndex(r)]); 
+            leftHalf[i+1] = leftHalf[i] - ((rightHalf[i+1] << 4 ^ rightHalf[i+1] >>> 5) + rightHalf[i+1] ^ (int) delta[i+1] + keys[keyIndex(r)]); 
         }
         
-        long decrypted = (long)leftHalf << 32 | rightHalf & 0xFFFFFFFFL;
+        long decrypted = (long)leftHalf[rounds-1] << 32 | rightHalf[rounds-1] & 0xFFFFFFFFL;
                 
         return decrypted;
+    }
+    
+    public int keyIndex(int round) {
+        if (round % 2 != 0) {
+           return (int) delta[(round-1)/2] & 0x3;
+        } else {
+           return (int) delta[round/2 >>> 11] & 0x3;
+        }
     }
     
     /* Takes 64-bit block and returns the TEA encrypted bits */

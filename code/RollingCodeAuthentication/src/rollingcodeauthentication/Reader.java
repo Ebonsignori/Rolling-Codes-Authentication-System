@@ -52,7 +52,7 @@ public class Reader {
                 
                 // Run through 256 possibilites and find match by XOR with known IV and possible IV's
                 if (printingProgress) System.out.println("Pattern matching unpredictable sequence with txIV on record");
-                for (int i = 1; i < 256; i++) {
+                for (int i = 0; i < 256; i++) {
                     apparentTxIv = xtea.encrypt((long) actualTxIv + i);
                     isValidIV = (apparentTxIv ^ txId) == unpredictableSequence;
                     if (isValidIV) {
