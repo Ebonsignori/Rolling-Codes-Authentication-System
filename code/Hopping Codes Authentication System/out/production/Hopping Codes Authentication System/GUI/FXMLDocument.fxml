@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import GUI.validatetextfields.*?>
+
+<Pane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.FXMLDocumentController">
+   <children>
+      <Label fx:id="currentValuesHeader" alignment="TOP_CENTER" layoutX="15.0" layoutY="325.0" text="Current Values of Selected TX" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="currentRdID" layoutX="61.0" layoutY="369.0">
+         <graphic>
+            <Label alignment="BOTTOM_CENTER" text="Linked Reader ID:" />
+         </graphic>
+      </Label>
+      <Label fx:id="currentTxID" alignment="BOTTOM_CENTER" layoutX="61.0" layoutY="412.0">
+         <graphic>
+            <Label fx:id="txIDLabel" alignment="BOTTOM_CENTER" text="Transmitter ID: " />
+         </graphic>
+      </Label>
+      <ShortNumberField fx:id="readerIDField" layoutX="641.0" layoutY="365.0">
+         <tooltip>
+            <Tooltip text="Changing the linked reader ID will unlink this transmitter from this reader. If you try to link this transmitter to another reader, you will not be able to authenticate because you do not share a key nor does the reader have the corresponding tx IV's in its records." />
+         </tooltip>
+      </ShortNumberField>
+      <Button layoutX="660.0" layoutY="530.0" mnemonicParsing="false" onAction="#updateValues" text="Update Values" />
+      <Label alignment="BOTTOM_CENTER" layoutX="552.0" layoutY="494.0" text="Current IV" />
+      <LongNumberField fx:id="transmitterIDField" layoutX="641.0" layoutY="408.0" prefHeight="25.0" prefWidth="149.0">
+         <tooltip>
+            <Tooltip text="Changes to the transmitter's ID will be reflected in the linked reader's records." />
+         </tooltip>
+      </LongNumberField>
+      <LongNumberField fx:id="ivField" layoutX="641.0" layoutY="490.0">
+         <tooltip>
+            <Tooltip text="Changes to the selected transmitter's IV will be reflected in the reader's record." />
+         </tooltip>
+      </LongNumberField>
+      <Label alignment="BOTTOM_CENTER" layoutX="553.0" layoutY="455.0" text="Shared Key" />
+      <Label alignment="BOTTOM_CENTER" layoutX="553.0" layoutY="369.0" text="Reader ID" />
+      <IntNumberField fx:id="keyField" layoutX="641.0" layoutY="451.0" prefHeight="25.0" prefWidth="149.0">
+         <tooltip>
+            <Tooltip text="Changing the transmitter's key will not change the linked reader's key." />
+         </tooltip>
+      </IntNumberField>
+      <Label alignment="BOTTOM_CENTER" layoutX="552.0" layoutY="412.0" text="Transmitter ID " />
+      <Label alignment="TOP_CENTER" layoutX="510.0" layoutY="325.0" text="Change Values of Selected TX " textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <Pane layoutX="300.0" prefHeight="324.0" prefWidth="239.0" GridPane.columnIndex="1">
+         <children>
+            <Group fx:id="leftArrow" layoutX="-3.0" layoutY="-21.0">
+               <children>
+                  <Line endX="100.0" layoutX="120.0" layoutY="121.0" startX="-100.0" />
+                  <Line endX="30.0" layoutX="48.0" layoutY="104.0" rotate="150.0" startX="-30.0" />
+                  <Line endX="30.0" layoutX="48.0" layoutY="135.0" rotate="30.0" startX="-30.0" />
+               </children>
+            </Group>
+            <Button fx:id="authenticateBtn" disable="true" layoutX="61.0" layoutY="280.0" mnemonicParsing="false" onAction="#authenticate" text="Authenticate">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Group fx:id="rightArrow" layoutX="-5.0" layoutY="127.0">
+               <children>
+                  <Line endX="30.0" layoutX="197.0" layoutY="40.0" rotate="30.0" startX="-30.0" />
+                  <Line endX="100.0" layoutX="120.0" layoutY="57.0" startX="-100.0" />
+                  <Line endX="30.0" layoutX="198.0" layoutY="72.0" rotate="150.0" startX="-30.0" />
+               </children>
+            </Group>
+            <Separator layoutX="-300.0" layoutY="317.0" prefHeight="17.0" prefWidth="800.0" />
+            <CheckBox fx:id="printValues" layoutX="45.0" layoutY="257.0" mnemonicParsing="false" text="Print Values To Console" />
+            <CheckBox fx:id="printProgress" layoutX="38.0" layoutY="228.0" mnemonicParsing="false" text="Print Progress To Console" />
+            <HBox alignment="TOP_CENTER" layoutX="-9.0" layoutY="14.0" prefHeight="31.0" prefWidth="254.0" spacing="10.0">
+               <children>
+                  <Button fx:id="addReaderBtn" mnemonicParsing="false" onAction="#addReader" text="Add Reader With" />
+                  <NumberOfTXTextField fx:id="numOfTXText" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="23.0" prefWidth="35.0">
+                     <tooltip>
+                        <Tooltip text="You can link between 1 and 10 transmitters to 1 reader for up to 5 readers" />
+                     </tooltip>
+                  </NumberOfTXTextField>
+                  <Label alignment="TOP_CENTER" text="Transmitters" textAlignment="CENTER">
+                     <HBox.margin>
+                        <Insets top="4.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </Pane>
+      <TextArea fx:id="logConsole" editable="false" layoutY="573.0" prefHeight="164.0" prefWidth="800.0" GridPane.columnSpan="3" GridPane.rowIndex="2" />
+      <Pane>
+         <children>
+            <ListView fx:id="rdList" layoutX="14.0" layoutY="74.0" onMouseClicked="#selectRD" prefHeight="240.0" prefWidth="264.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </ListView>
+            <Label alignment="TOP_CENTER" layoutX="77.0" layoutY="26.0" text="Reader(s) [RD]" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="25.0" />
+               </VBox.margin>
+            </Label>
+         </children>
+      </Pane>
+      <Pane layoutX="539.0" GridPane.columnIndex="2">
+         <children>
+            <Label alignment="TOP_CENTER" layoutX="41.0" layoutY="27.0" text="Transmitter(s) [TX]" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="25.0" />
+               </VBox.margin>
+            </Label>
+            <ListView fx:id="txList" layoutX="7.0" layoutY="79.0" onMouseClicked="#selectTX" prefHeight="232.0" prefWidth="248.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </ListView>
+         </children>
+      </Pane>
+      <Label alignment="TOP_CENTER" layoutX="375.0" layoutY="503.0" text="Console" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <Button layoutX="80.0" layoutY="530.0" mnemonicParsing="false" onAction="#resetAll" text="Reset All" textFill="RED">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Label fx:id="currentKey" layoutX="57.0" layoutY="455.0">
+         <graphic>
+            <Label alignment="BOTTOM_CENTER" text="Shared Key: " translateX="5.0" />
+         </graphic>
+      </Label>
+      <Label fx:id="currentIV" layoutX="66.0" layoutY="494.0" translateX="-4.0">
+         <graphic>
+            <Label fx:id="currentIVLabel" alignment="BOTTOM_CENTER" text="Current IV:" />
+         </graphic>
+      </Label>
+      <Button layoutX="376.0" layoutY="543.0" mnemonicParsing="false" onAction="#clearConsole" text="Clear Console">
+         <font>
+            <Font name="System Italic" size="12.0" />
+         </font>
+      </Button>
+   </children>
+</Pane>

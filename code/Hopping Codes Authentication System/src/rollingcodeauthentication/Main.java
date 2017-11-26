@@ -8,7 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 /* Main method and Application entry point */
-public class RollingCodeAuthentication extends Application {
+public class Main extends Application {
     
     /* Get FXML document as Pane and set it to scene */
     @Override

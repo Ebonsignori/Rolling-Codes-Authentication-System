@@ -4,19 +4,30 @@ This Java application demonstrates the authentication protocol between a reader 
 
 ![alt text](./documentation/images/demo.PNG?style=centerme "GUI Authentication between Reader #4 and Transmitter #8")
 
-## This Document
+## Executive Summary of Project
+For full documentation, see [Citation Required]
 
-To see what this demonstration can do, see **[Features](#features)**.
+### Problem Overview
+Given two separated entities, a transmitter and a reader, one needs to be able to correctly identify another when communicating across a medium. These entities may be two pieces of hardware, and the medium wireless communication. They may be two separated software constructs communicating over the WWW. For instance, a car key fob is a transmitter, and the reader that needs to identify it is the car it is intended to open. Another example is a light in a building (reader), can be activated over WIFI from a cell phone (transmitter). In each other these cases, the reader should only do something if the transmitter sending the signal is the one that the reader is linked to. The process by which a reader receives a request from a transmitter and verifies it is called the authentication process. 
 
-To find out how to interact with the user interface, see **[Tutorial](#tutorial)**. 
+## Purpose
+Evaluating the need for this type of authentication process is trivial. There are multiple communications between two systems that need to verify a sender’s identity before carrying out some operation. More important is the question of why our project is implemented in software rather than hardware. The need to represent the authentication process in software is useful for many reasons. Not only can the authentication process be implemented to authentication between two separate software entities, but the software representation can be useful for testing the authentication process before implementing it in hardware.
 
-To get an overview of the system and the processes used, see **[Problem Description](#problem-description)**.
+However, the purpose of our Rolling Codes Authentication System is not to securely communicate between two entities, rather it is to demonstrate this very communication. Thus, our project is education in its scope and purpose and is not intended to be used in any commercial product. The educational benefit of our project is to understand and correctly demonstrate a concrete implementation of symmetric key cryptography between a reader and any number of linked transmitters. 
 
-## Features
+## The Specifics of The Problem  
+The description of the system is as follows: A reader has multiple linked transmitters. Each transmitter has a 64-bit IV that corresponds to an IV stored in the reader’s record. Having the transmitter IV in the reader’s record before communication is established is what puts this problem in the domain of symmetric key cryptography. The key stored in the reader is used for verifying communication requests sent by the corresponding transmitter. The authentication process begins when the transmitter sends a packet to the reader.
 
-## Tutorial
+The initial packet send is called the request packet and consists of three elements: the ID of the transmitter sending the packet (64-bits), the id of the reader the packet is being sent to (16-bits), and the unpredictable sequence (64-bits). The unpredictable sequence is the most important part of securing the authentication process. It is one of 256 encrypted transmitter IVs, selected at (pseudo) random. 
+The encryption method used is called XTEA (eXtended Tiny Encryption Algorithm) with CTR mode (Counter Mode).  XTEA requires a 128-bit key, which both the transmitter and reader have stored in their records. The transmitter generates 256 XTEA encrypted IVs where each IV is summed with the current iteration (i = 0 to 256) before being encrypted. After encrypting each IV+i using the XTEA, we pseudo-randomly select one of the 256 results. Now the final step is the CTR mode step, where we XOR the chosen encrypted result with the transmitter’s ID to get our unpredictable sequence.  
 
-## Problem Description
+When the reader receives the request packet containing the unpredictable sequence, it uses the transmitter ID provided by the packet to fetch its corresponding IV and repeats the process described in the previous paragraph. It encrypts IV+i for i = 0 to 256 and XOR’s each result with the transmitter’s ID. At each step the reader compares the results of XOR’ing the encrypted IV+i and if it matches the unpredictable sequence, then the authentication process is verified. 
 
-Design and implement an algorithm that performs rolling code approach to accomplish authentication between a
-transmitter and a reader. 
+Now we have a system that requires a transmitter to know both a transmitter’s ID and it’s IV, and we only provide the ID in the response packet for interception. The unpredictable sequence has been encrypted using XTEA with CTR mode and thus leaks little information. However, if a skilled interceptor manages to find the IV and recreate the process used to generate the unpredictable sequence, then they can resend the request packet and verify the authentication protocol. 
+
+To prevent interceptors who have figured out both the ID and IV of a transmitter from authenticating a reader, we implement our final method of security – rolling codes. The rolling codes method requires that a response packet be returned to the transmitter after each request. If the request is verified then the response packet will let the transmitter know it’s time to update their IV with a new value that they provide in the final 64-bits of the response packet. This value is the XTEA with CTR encrypted value of IV+256. Before sending the value, the reader updates its record with a new IV corresponding to the transmitter, IV+256. After receiving the value, the transmitter decrypts the last 64-bits of the response packet and if it isn’t the current IV of the transmitter, the transmitter updates its own IV value as the value decrypted (IV+256). 
+
+## Implementation
+In software, we represent the reader and transmitter as classes with their appropriate attributes. A reader has its ID, an array of linked transmitter ID and IV pairs, and a key. A transmitter has its ID, IV, and a key that is the same as the reader it is linked to. A packet class is used to concatenate an inputted transmitter ID, reader ID, and 64-bits into a single construct that can be read by methods in both the transmitter and reader classes. The initial values of every attribute in the reader and transmitter classes are pseudo randomly generated at runtime by a RandomBits class. The XTEA algorithm is represented as a class that can be initialized with a 128-bit key with methods for encrypt and decryption that take 64-bits as argument (plaintext for encryption, ciphertext for decryption). 
+
+Attributes that need to be in bits are represented using the following Java primitives: 16 bits are as a short primitive, 32 bits as an int primitive, 64 bits as a long primitive, and the 128-bit key as an array of four 32-bit int primitives. Initialization and communication between the models are done with a controller class, FXMLDocumentController. This controller class communicates with the FXML GUI named FXMLDocument.fxml. The GUI allows for users to create up to 5 readers each linked with 1 to 10 transmitters. The controller class initializes each object as they are created and when a user chooses to begin the authentication protocol between them, the controller class initiates the authentication by generating a request packet from the transmitter and sending it to the reader. The response packet is then also sent through the controller and the results of the authentication outputted to the GUI. 
