@@ -276,11 +276,12 @@ public class FXMLDocumentController implements Initializable {
     */
     @FXML
     public void authenticate() {
-        // Get selected TX and RD
+        // Get selected TX and RD indexes
         int txIndex = txList.getFocusModel().getFocusedIndex();
         int rdIndex = rdList.getFocusModel().getFocusedIndex();
         if (txIndex > -1 && rdIndex > -1) {
             try {
+                // User index to get transmitter and see if linked reader ID exists
                 Reader reader = null;
                 Transmitter tx = TXs.get(txIndex);
                 for (Reader rd : RDs) {
@@ -292,7 +293,7 @@ public class FXMLDocumentController implements Initializable {
                         }                    
                     } 
                 }
-                
+                // If the reader ID matches no reader, update status to failure
                 if (reader == null) {
                         logConsole.setText("Selected transmitter is not linked to the selected reader.");
                         colorRightArrow("fail");
@@ -332,14 +333,16 @@ public class FXMLDocumentController implements Initializable {
                         System.out.println("Authentication Completed Sucessfully");
                         colorRightArrow("success");
                     }
+                    // Fail message
                     else {
                         System.out.println("Authentication Failed");
                         colorRightArrow("fail");
                     }
                 }
+                // If unobserved error occurs, notify user.
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("Authentication Ended With Error.");
+                System.out.println("Authentication Ended With Error. Please contact admin.");
             }  
         }
     }

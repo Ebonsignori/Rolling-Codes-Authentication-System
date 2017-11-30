@@ -62,6 +62,7 @@ public class XTEA {
         return decrypted;
     }
 
+    /* Function for selecting a pseudo-random number for the key index */
     public int keyIndex(int round) {
         if (round % 2 != 0) {
             return (int) delta[(round-1)/2] & 0x3;

@@ -1,4 +1,4 @@
-package unittesting;
+package testing;
 
 import rollingcodeauthentication.XTEA;
 
