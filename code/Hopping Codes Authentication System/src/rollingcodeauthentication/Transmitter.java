@@ -106,7 +106,7 @@ public class Transmitter  {
     public boolean updateRecord(Packet responsePacket, boolean printingProgress, boolean printingValues) {
        if (printingProgress) System.out.println("Response Packet recieved from reader");
        if (responsePacket.getBlock() != this.sentRequestPacket.getBlock()) {
-           if (printingProgress) System.out.print("Updating Transmitter Record with next IV"  );
+           if (printingProgress) System.out.println("Updating Transmitter Record with next IV"  );
            // Update IV to the old IV + 256, as stored in response packet
            this.txIV = xtea.decrypt(responsePacket.getBlock());
            if (printingValues) 
