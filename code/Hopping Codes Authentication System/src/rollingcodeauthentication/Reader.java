@@ -35,11 +35,11 @@ public class Reader {
     
     /* Takes in request packet and returns response packet if verified */
     public Packet getResponsePacket(Packet requestPacket, boolean printingProgress, boolean printingValues) {
-        if (printingProgress) System.out.println("Request Packet Recieved by Reader");
+        if (printingProgress) System.out.println("Request Packet Received by Reader");
         // Verify TX sent request to this reader
         if (requestPacket.getReaderId() == this.readerID) {
              // Verify TX's ID is linked to this reader (in the TX ID list)
-             if (printingProgress) System.out.println("Trasmitter ID is in Reader's System");
+             if (printingProgress) System.out.println("Transmitter ID is in Reader's System");
              long txId = requestPacket.getTxId();
              int[] txIdIvIndexes = this.indexPairOf(txId);
              
@@ -50,7 +50,7 @@ public class Reader {
                 long unpredictableSequence = requestPacket.getBlock();
                 boolean isValidIV = false;
                 
-                // Run through 256 possibilites and find match by XOR with known IV and possible IV's
+                // Run through 256 possibilities and find match by XOR with known IV and possible IV's
                 if (printingProgress) System.out.println("Pattern matching unpredictable sequence with txIV on record");
                 for (int i = 0; i < 256; i++) {
                     apparentTxIv = xtea.encrypt((long) actualTxIv + i);

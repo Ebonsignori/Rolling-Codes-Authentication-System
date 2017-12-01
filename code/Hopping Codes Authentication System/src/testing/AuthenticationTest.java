@@ -38,7 +38,7 @@ public class AuthenticationTest {
             }
             // Output result of authentication
             if (isSuccessful) {
-                System.out.println("Authentication Completed Sucessfully");
+                System.out.println("Authentication Completed Successfully");
             } else {
                 System.out.println("Authentication Failed");
             }

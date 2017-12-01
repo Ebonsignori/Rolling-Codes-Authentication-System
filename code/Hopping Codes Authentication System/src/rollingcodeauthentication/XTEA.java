@@ -9,7 +9,7 @@ public class XTEA {
     private long[] delta = new long[rounds];
     private int[] keys;
 
-    /* Initalize XTEA Object with key and set initial value of delta */
+    /* Initialize XTEA Object with key and set initial value of delta */
     public XTEA(int[] key) {
         this.keys = key;
         delta[0] = Long.parseLong("2654435769");

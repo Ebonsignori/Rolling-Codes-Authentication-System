@@ -42,7 +42,7 @@ public class Transmitter  {
        return this.linkedReaderID;
     }
     
-    /* Sets linked reader ID. Reader not guarenteed to have TX ID in its record */
+    /* Sets linked reader ID. Reader not guaranteed to have TX ID in its record */
     public void setReaderID(short readerID) {
        this.linkedReaderID = readerID;
     }
@@ -81,15 +81,15 @@ public class Transmitter  {
        if (printingProgress) System.out.println("Fetching Request Packet from Transmitter");
        int ctr = 256;
        long[] Ivs = new long[ctr];
-       // Encrypt IV+i for i=0-256 and psuedo-randomly select one
+       // Encrypt IV+i for i=0-256 and pseudo-randomly select one
        if (printingProgress) System.out.println("Encrypting IVs+i for i = 0, 1, 2, .. 256 and selecting one to include in response packet");
        for (int i =  0; i < ctr; i++) {
            Ivs[i] = xtea.encrypt((long) this.txIV + i);
        }
-       // Psuedo-randomly select an encrypted IV and XOR it with TX ID
+       // Pseudo-randomly select an encrypted IV and XOR it with TX ID
        int randomIndex = 0 + (int)(Math.random() * ((ctr - 0) + 1));
        if (printingProgress)
-            System.out.println("Selecting psuedo-random IV+i and XOR it with transmitter ID");
+            System.out.println("Selecting pseudo-random IV+i and XOR it with transmitter ID");
        if (printingValues)
            System.out.println("Selected IV+i = " + Long.toBinaryString(Ivs[randomIndex]));
        long unpredictableSequence = Ivs[randomIndex] ^ this.txID;
@@ -98,13 +98,13 @@ public class Transmitter  {
        this.sentRequestPacket = new Packet(this.txID,
                           this.linkedReaderID,
                           unpredictableSequence);
-       if (printingProgress) System.out.println("Packet sent with Trasmitter ID, Reader ID, and Encrypted IV+i");
+       if (printingProgress) System.out.println("Packet sent with Transmitter ID, Reader ID, and Encrypted IV+i");
        return sentRequestPacket;
     }
     
     /* Update TX's IV if linked Reader sends verified response packet  */
     public boolean updateRecord(Packet responsePacket, boolean printingProgress, boolean printingValues) {
-       if (printingProgress) System.out.println("Response Packet recieved from reader");
+       if (printingProgress) System.out.println("Response Packet received from reader");
        if (responsePacket.getBlock() != this.sentRequestPacket.getBlock()) {
            if (printingProgress) System.out.println("Updating Transmitter Record with next IV"  );
            // Update IV to the old IV + 256, as stored in response packet

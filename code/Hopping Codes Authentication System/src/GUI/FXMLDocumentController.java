@@ -27,7 +27,7 @@ import rollingcodeauthentication.Transmitter;
 
 /* Controller class for FXMLDocument.fxml */
 public class FXMLDocumentController implements Initializable {
-    // Initalize components and variables
+    // Initialize components and variables
     public ArrayList<Reader> RDs = new ArrayList<Reader>(); // All RDs
     public ArrayList<Transmitter> TXs = new ArrayList<Transmitter>(); // All TXs
     private int numOfReaders = 0;
@@ -77,7 +77,7 @@ public class FXMLDocumentController implements Initializable {
     */
     @FXML
     public void addReader() {
-        // Maxiumum of 5 RDs
+        // Maximum of 5 RDs
         if (numOfReaders < 5) {
             // Get number of TX to be linked to RD
             int numOfTX = Integer.parseInt(this.numOfTXText.getText());
@@ -152,7 +152,7 @@ public class FXMLDocumentController implements Initializable {
                 }
             });
         } else {
-            logConsole.setText("Reader limit exeeded");
+            logConsole.setText("Reader limit exceeded");
         }
     }
     
@@ -307,7 +307,7 @@ public class FXMLDocumentController implements Initializable {
                     System.out.println(" and TX #" + Integer.toString(txIndex+1));
 
                     /* In software we fetch the request packet from TX though the
-                     * TX is the one that initalizes the authentication process */
+                     * TX is the one that initializes the authentication process */
                     Packet requestPacket = tx.getRequestPacket(printingProgress, printingValues);
   
                     colorLeftArrow("success"); // Color arrow green
@@ -330,7 +330,7 @@ public class FXMLDocumentController implements Initializable {
                     }
                     // Output result of authentication
                     if (isSuccessful) {
-                        System.out.println("Authentication Completed Sucessfully");
+                        System.out.println("Authentication Completed Successfully");
                         colorRightArrow("success");
                     }
                     // Fail message
@@ -399,7 +399,7 @@ public class FXMLDocumentController implements Initializable {
         currentKey.setText(""); 
         currentIVLabel.setText("Current IV:");
         currentIV.setText("");
-        // Clear Updateable Values
+        // Clear updatable Values
         readerIDField.setText("");
         transmitterIDField.setText("");
         keyField.setText("");
@@ -419,7 +419,7 @@ public class FXMLDocumentController implements Initializable {
         logConsole.setText("");      
     }
     
-    /* Initalize Console and diable appropriate fields */
+    /* Initialize Console and disable appropriate fields */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Create console to output status of the authentication        
